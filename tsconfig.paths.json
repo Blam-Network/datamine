@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "paths": {
-      "@blamnetwork/datamine": ["./src/index.ts"],
-      "@blamnetwork/datamine/*": ["./src/*"]
-    }
-  }
-}

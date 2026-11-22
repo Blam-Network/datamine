@@ -38,7 +38,7 @@ function code_of(file: string): string {
     .join("\n");
 }
 
-// Needs `npm run build -w packages/datamine` first.
+// Needs `npm run build` first.
 describe.skipIf(!existsSync(resolve(k_dist, "events.js")))(
   "built browser entries",
   () => {

@@ -9,15 +9,22 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "node ../../scripts/clean-dist.mjs && tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json && node ../../scripts/write-cjs-package-json.mjs",
+    "build": "node scripts/clean-dist.mjs && tsc -p tsconfig.build.json && tsc -p tsconfig.build.cjs.json && node scripts/write-cjs-package-json.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
+    "validate": "npm run check && npm run typecheck && npm run test",
     "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Blam-Network/tiger.git",
-    "directory": "packages/datamine"
+    "url": "git+https://github.com/Blam-Network/datamine.git"
   },
+  "bugs": {
+    "url": "https://github.com/Blam-Network/datamine/issues"
+  },
+  "homepage": "https://github.com/Blam-Network/datamine#readme",
   "keywords": [
     "destiny",
     "halo",
@@ -94,5 +101,12 @@
   "dependencies": {
     "@craftycodie/cstruct": "^2.0.0-alpha.5",
     "fflate": "^0.8.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.15",
+    "@types/node": "^22",
+    "typescript": "^5",
+    "ultracite": "7.7.0",
+    "vitest": "^3.2.4"
   }
 }

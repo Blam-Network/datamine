@@ -457,5 +457,3 @@ The JSON types (`s_events_server_hello`, `s_events_server_entry`, `s_events_serv
 - The category dump's rows have six level columns, but the header names only five, so which is which is partly guessed.
 - Destiny's collection server may expect different parameters, content type, filename or success body. The upload defaults match Halo's, with a plain status 200 check for `3.1`.
 - What `g%08d` counts in Destiny log lines is not known. It is written as the game time when a provider supplies one, and zero otherwise.
-
-Built, tested and released with the rest of the [tiger](../../README.md) monorepo.

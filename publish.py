@@ -1,6 +1,6 @@
-# python packages/datamine/publish.py
+# python publish.py
 # Validates @blamnetwork/datamine, bumps its version, commits, and pushes the
-# `datamine-v<version>` tag; datamine-publish.yml publishes from the tag.
+# `v<version>` tag; publish.yml publishes from the tag.
 import json
 import re
 import shutil
@@ -8,9 +8,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-PACKAGE = "packages/datamine"
-MANIFEST = ROOT / PACKAGE / "package.json"
+ROOT = Path(__file__).resolve().parent
+MANIFEST = ROOT / "package.json"
 LOCKFILE = "package-lock.json"
 SEMVER = re.compile(
     r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$"
@@ -37,7 +36,7 @@ def fail(message):
 
 
 def check_clean():
-    dirty = capture("git", "status", "--porcelain", "--", PACKAGE, LOCKFILE)
+    dirty = capture("git", "status", "--porcelain")
     if dirty:
         fail(f"Uncommitted changes:\n{dirty}")
 
@@ -47,26 +46,26 @@ def check_clean():
     except subprocess.CalledProcessError:
         fail(f"{branch} has no upstream; push it first.")
     run("git", "fetch", "--quiet", "origin")
-    unpushed = capture("git", "log", "--oneline", f"{upstream}..HEAD", "--", PACKAGE)
+    unpushed = capture("git", "log", "--oneline", f"{upstream}..HEAD")
     if unpushed:
         fail(f"Commits not pushed to {upstream}:\n{unpushed}")
     if capture("git", "rev-list", "--count", f"HEAD..{upstream}") != "0":
         fail(f"{branch} is behind {upstream}; pull first.")
 
 
-# The checks datamine-publish.yml runs before it publishes.
+# The checks publish.yml runs before it publishes.
 def validate():
-    run(NPX, "ultracite", "check", PACKAGE)
-    run(NPM, "run", "typecheck", "-w", PACKAGE)
-    run(NPX, "vitest", "run", PACKAGE)
-    run(NPM, "run", "build", "-w", PACKAGE)
+    run(NPX, "ultracite", "check")
+    run(NPM, "run", "typecheck")
+    run(NPX, "vitest", "run")
+    run(NPM, "run", "build")
 
 
 def ask_version(current):
     version = input("New version: ").strip()
     if not SEMVER.match(version) or version == current:
         fail(f'Invalid or unchanged version "{version}".')
-    tag = f"datamine-v{version}"
+    tag = f"v{version}"
     if capture("git", "tag", "--list", tag) or capture(
         "git", "ls-remote", "--tags", "origin", tag
     ):
@@ -85,9 +84,9 @@ def main():
     if input(f"Publish {pkg['name']}@{version} to {channel}? [y/N] ").strip().lower() != "y":
         fail("Cancelled.")
 
-    run(NPM, "version", version, "--no-git-tag-version", "-w", PACKAGE)
-    run("git", "add", f"{PACKAGE}/package.json", LOCKFILE)
-    run("git", "commit", "-m", f"datamine: v{version}")
+    run(NPM, "version", version, "--no-git-tag-version")
+    run("git", "add", "package.json", LOCKFILE)
+    run("git", "commit", "-m", f"v{version}")
     run("git", "tag", tag)
     run("git", "push", "origin", "HEAD")
     run("git", "push", "origin", tag)

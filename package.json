@@ -14,8 +14,9 @@
     "test": "vitest run",
     "check": "ultracite check",
     "fix": "ultracite fix",
-    "validate": "npm run check && npm run typecheck && npm run test",
-    "prepack": "npm run build"
+    "validate": "npm run check && npm run typecheck && npm run build && npm run test",
+    "prepack": "npm run build",
+    "release": "node scripts/release.mjs"
   },
   "repository": {
     "type": "git",

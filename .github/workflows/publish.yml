@@ -1,6 +1,7 @@
 name: publish
 
-# Push a version tag to publish, e.g. git tag v0.1.0 && git push origin v0.1.0
+# Run `npm run release` to bump the version and push a tag, or push one by hand,
+# e.g. git tag v0.1.0 && git push origin v0.1.0
 # The tag version must match package.json "version".
 # Prerelease versions publish to the npm dist-tag "next", not "latest".
 #
@@ -16,7 +17,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       id-token: write
     steps:
       - uses: actions/checkout@v4
@@ -36,10 +37,7 @@ jobs:
           fi
 
       - run: npm ci
-      - run: npx ultracite check
-      - run: npm run typecheck
-      - run: npx vitest run
-      - run: npm run build
+      - run: npm run validate
 
       - name: Publish to npm
         run: |
@@ -50,3 +48,8 @@ jobs:
           fi
           echo "Publishing @blamnetwork/datamine@${PKG_VERSION} with dist-tag ${NPM_TAG}"
           npx npm@latest publish --provenance --access public --tag "$NPM_TAG"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
